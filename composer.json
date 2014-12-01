@@ -1,0 +1,7 @@
+{
+	"name" : "simplePDO",
+	"require" : {
+		"php": ">=5.4.0",
+		"symfony/console" : "~2.4"
+	}
+}
