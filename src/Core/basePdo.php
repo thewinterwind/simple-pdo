@@ -13,9 +13,14 @@ abstract class basePdo {
         $this->init();
     }
 
+    public function __destruct()
+    {
+        $this->dbh = null;
+    }
+
     protected function init()
     {
-        require '../vendor/autoload.php';
+        require_once '../vendor/autoload.php';
 
         $this->setEnvironment();
 
@@ -45,9 +50,9 @@ abstract class basePdo {
         unset($this->env);
     }
     
-    protected function getEnvironment()
+    protected function setEnvironment()
     {
-        $config = require '..config.php';
+        $config = require_once '../config.php';
 
         foreach ($config as $environment) {
             if ($environment['hostname'] === gethostname()) {
