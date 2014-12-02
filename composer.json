@@ -3,5 +3,11 @@
 	"require" : {
 		"php": ">=5.4.0",
 		"symfony/console" : "~2.4"
-	}
+	},
+    "autoload": {
+        "psr-4": { "src\\SimplePdo": "src" },
+        "files": [
+            "src/helpers/helpers.php",
+        ]
+    }
 }

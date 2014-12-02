@@ -1,0 +1,34 @@
+<?php
+
+return [
+    'local' => [
+        'dbms'     => 'mysql',
+        'hostname' => '', // type `hostname` in your command line
+        'db_host'  => 'localhost',
+        'db_name'  => 'testdb',
+        'db_user'  => 'root',
+        'db_pass'  => '',
+        'charset'  => 'utf8',
+        'db_path'  => '/path/to/database.db', // sqlite only
+    ],
+    'staging' => [
+        'dbms'     => 'mysql',
+        'hostname' => '',
+        'db_host'  => '',
+        'db_name'  => '',
+        'db_user'  => '',
+        'db_pass'  => '',
+        'charset'  => 'utf8',
+        'db_path'  => '',
+    ],
+    'production' => [
+        'dbms'     => 'mysql',
+        'hostname' => '',
+        'db_host'  => '',
+        'db_name'  => '',
+        'db_user'  => '',
+        'db_pass'  => '',
+        'charset'  => 'utf8',
+        'db_path'  => '/path/to/database.db',
+    ],
+];
