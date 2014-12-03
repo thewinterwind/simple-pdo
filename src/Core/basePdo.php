@@ -7,6 +7,8 @@ use PDO;
 abstract class BasePdo {
 
 protected $dbh;
+protected $sql;
+protected $bindings = [];
 
     public function __construct()
     {
