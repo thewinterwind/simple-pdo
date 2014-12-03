@@ -9,9 +9,9 @@ class SimplePdo extends BasePdo {
 
 protected $dbh;
 
-    public function raw($query, $assoc = false)
+    public function select($query, $assoc = false)
     {
-        $statement = $this->dbh->query($query);
+        $statement = $this->dbh->query('SELECT ' . $query);
  
         if ($assoc === true) {
             $statement->setFetchMode(PDO::FETCH_ASSOC);
@@ -19,7 +19,7 @@ protected $dbh;
             $statement->setFetchMode(PDO::FETCH_OBJ);
         }
 
-        return $statement->fetchAll();
+        return $statement;
     }
 
     public function insert($table, array $params)
@@ -40,6 +40,11 @@ protected $dbh;
         $statement = $this->bindValues($statement, $params);
 
         return $statement->execute();
+    }
+
+    public function statement($statement)
+    {
+        return $this->dbh->exec($statement);
     }
 
     protected function placeholders(array $params)
