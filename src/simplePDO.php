@@ -2,15 +2,16 @@
 
 namespace SimplePdo;
 
+use PDO;
 use SimplePdo\Core\BasePdo;
-
-protected $dbh;
 
 class SimplePdo extends BasePdo {
 
+protected $dbh;
+
     public function raw($query, $assoc = false)
     {
-        $statement = $this->dbh->raw($query);
+        $statement = $this->dbh->query($query);
  
         if ($assoc === true) {
             $statement->setFetchMode(PDO::FETCH_ASSOC);
@@ -18,7 +19,7 @@ class SimplePdo extends BasePdo {
             $statement->setFetchMode(PDO::FETCH_OBJ);
         }
 
-        return $statement->fetch();
+        return $statement->fetchAll();
     }
 
     protected function insert($table, array $params)

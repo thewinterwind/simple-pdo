@@ -4,9 +4,9 @@ namespace SimplePdo\Core;
 
 use PDO;
 
-protected $dbh;
+abstract class BasePdo {
 
-abstract class basePdo {
+protected $dbh;
 
     public function __construct()
     {
@@ -20,7 +20,7 @@ abstract class basePdo {
 
     protected function init()
     {
-        require_once '../vendor/autoload.php';
+        require_once __DIR__ . '/../../vendor/autoload.php';
 
         $this->setEnvironment();
 
@@ -35,10 +35,10 @@ abstract class basePdo {
                     dbname=' . $this->env['db_name'] . ';
                     charset=' . $this->env['charset'], 
                     $this->env['db_user'], 
-                    $this->env['db_pass'] 
+                    $this->env['db_pass'],
                     [
                         PDO::ATTR_EMULATE_PREPARES => false, 
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     ]);
             } else {
                 $this->dbh = new PDO('sqlite:' . $this->env['db_path']);
@@ -52,7 +52,7 @@ abstract class basePdo {
     
     protected function setEnvironment()
     {
-        $config = require_once '../config.php';
+        $config = require_once __DIR__ . '/../../config.php';
 
         foreach ($config as $environment) {
             if ($environment['hostname'] === gethostname()) {

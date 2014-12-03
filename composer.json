@@ -16,9 +16,12 @@
         "phpunit/phpunit": "4.3.*"
     },
     "autoload": {
-        "psr-4": { "src\\SimplePdo": "src" },
         "files": [
             "src/Helpers/helpers.php"
+        ],
+        "classmap" : [
+            "src",
+            "src/Core"
         ]
     }
 }

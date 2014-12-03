@@ -1,8 +1,10 @@
 <?php
 
+require __DIR__ . '/vendor/autoload.php';
+
 // example
 $db = new \SimplePdo\SimplePdo;
 
-$result = $db->raw('SELECT * FROM people LIMIT 3');
+$results = $db->raw('SELECT firstname FROM people LIMIT 3');
 
-dd($result);
+dd($results);
