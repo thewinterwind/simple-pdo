@@ -1,5 +1,14 @@
 {
-    "name" : "simple-pdo",
+    "name" : "anthonyvipond/simple-pdo",
+    "description": "Simple wrapper around PDO",
+    "keywords"    : ["php", "pdo"],
+    "license"     : "MIT",
+    "authors": [
+        {
+            "name": "Anthony Vipond",
+            "email": "anthonytrading81@gmail.com"
+        }
+    ],
     "require" : {
         "php": ">=5.4.0"
     },
