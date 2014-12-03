@@ -8,27 +8,9 @@ protected $dbh;
 
 class SimplePdo extends BasePdo {
 
-    public function query(array $params)
+    public function raw($query, $assoc = false)
     {
-        $keys = implode(',', array_keys($params));
-        $values = implode(',', $this->escape(array_values($params)));
-
-        foreach ($para as $key => $value) {
-            # code...
-        }
-
-        $statement = $this->dbh->prepare(' . $keys . ')' . values ' . ' (' . $values . ')';
-        $statement->execute($data);
-    }
-
-    protected function escape(array $values)
-    {
-        return array_map('mysqli_real_escape_string', $params);
-    }
-
-    protected function select($query, $assoc = false)
-    {
-        $statement = $this->dbh->query($query);
+        $statement = $this->dbh->raw($query);
  
         if ($assoc === true) {
             $statement->setFetchMode(PDO::FETCH_ASSOC);
@@ -51,10 +33,10 @@ class SimplePdo extends BasePdo {
 
         $query = $this->dbh->prepare($sql);
         
-        $q->execute($data);
+        return $query->execute($data);
     }
 
-    protected function getEscapedData($params)
+    protected function getInsertData($params)
     {
         foreach ($params as $key => $value) {
             $data[':' . $key] = trim($value);
@@ -62,6 +44,5 @@ class SimplePdo extends BasePdo {
 
         return $data;
     }
-    
 
 }

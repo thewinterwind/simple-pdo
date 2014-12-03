@@ -1,5 +1,5 @@
 {
-    "name" : "simplePDO",
+    "name" : "simple-pdo",
     "require" : {
         "php": ">=5.4.0"
     },
