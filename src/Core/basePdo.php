@@ -10,59 +10,32 @@ protected $dbh;
 protected $sql;
 protected $bindings = [];
 
-    public function __construct()
+    public function __construct(array $config)
     {
-        $this->init();
+        $this->initHandler($config);
     }
 
-    public function __destruct()
-    {
-        $this->dbh = null;
-    }
-
-    protected function init()
-    {
-        require_once __DIR__ . '/../../vendor/autoload.php';
-
-        $this->setEnvironment();
-
-        $this->initHandler();
-    }
-
-    protected function initHandler()
+    protected function initHandler(array $config)
     {
         try {
-            if ( $this->env['dbms'] !== 'sqlite') {
-                $this->dbh = new PDO($this->env['dbms'] . ':host=' . $this->env['db_host'] . ';
-                    dbname=' . $this->env['db_name'] . ';
-                    charset=' . $this->env['charset'], 
-                    $this->env['db_user'], 
-                    $this->env['db_pass'],
+            if ( $config['driver'] !== 'sqlite') {
+                $this->dbh = new PDO($config['driver'] . ':host=' . $config['host'] . ';
+                    dbname=' . $config['database'] . ';
+                    charset=' . $config['charset'], 
+                    $config['username'], 
+                    $config['password'],
                     [
                         PDO::ATTR_EMULATE_PREPARES => false, 
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     ]);
             } else {
-                $this->dbh = new PDO('sqlite:' . $this->env['db_path']);
+                $this->dbh = new PDO('sqlite:' . $config['db_path']);
             }
         } catch(PDOException $e) {
             print($e->getMessage());
         }
 
-        unset($this->env);
+        unset($config);
     }
     
-    protected function setEnvironment()
-    {
-        $config = require_once __DIR__ . '/../../config.php';
-
-        foreach ($config as $environment) {
-            if ($environment['hostname'] === gethostname()) {
-                $this->env = $environment;
-                return;
-            }
-        }
-
-        print 'You must set your hostname and other config in config.php'; die;
-    }
 }
