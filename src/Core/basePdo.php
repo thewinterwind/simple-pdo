@@ -8,6 +8,7 @@ abstract class BasePdo {
 
 protected $dbh;
 protected $sql;
+protected $statement;
 protected $bindings = [];
 
     public function __construct(array $config)
@@ -65,4 +66,18 @@ protected $bindings = [];
 
         return rtrim($sql, ', ');
     }
+
+    protected function dumpError($error) {
+        $backtrace = debug_backtrace();
+
+        dd([
+            'message' => $error->getMessage(),
+            'line' => $error->getLine(),
+            'file' => $error->getFile(),
+            'code' => $error->getCode(),
+            'last_file' => $backtrace[1]['file'],
+            'last_line' => $backtrace[1]['line'],
+        ]);
+    }
+    
 }

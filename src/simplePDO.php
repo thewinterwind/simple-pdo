@@ -2,7 +2,7 @@
 
 namespace SimplePdo;
 
-use PDO;
+use PDO, Exception, PDOException;
 use SimplePdo\Core\BasePdo;
 
 class SimplePdo extends BasePdo {
@@ -11,15 +11,24 @@ class SimplePdo extends BasePdo {
 
     public function select($query, $assoc = false)
     {
-        $statement = $this->dbh->query('SELECT ' . $query);
+        $this->statement = $this->dbh->query('SELECT ' . $query);
  
         if ($assoc === true) {
-            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $this->statement->setFetchMode(PDO::FETCH_ASSOC);
         } else {
-            $statement->setFetchMode(PDO::FETCH_OBJ);
+            $this->statement->setFetchMode(PDO::FETCH_OBJ);
         }
 
-        return $statement;
+        return $this;
+    }
+
+    public function fetch()
+    {
+        try {
+            return $this->statement->fetch();
+        } catch (Exception $e) {
+            $this->dumpError($e);
+        }
     }
 
     public function insert($table, array $params)
@@ -44,7 +53,11 @@ class SimplePdo extends BasePdo {
 
     public function statement($statement)
     {
-        return $this->dbh->exec($statement);
+        try {
+            return $this->dbh->exec($statement);
+        } catch (\PDOException $e) {
+            $this->dumpError($e);
+        }
     }
 
     protected function placeholders(array $params)
@@ -74,8 +87,20 @@ class SimplePdo extends BasePdo {
         return $this;
     }
 
-    public function exec() {
-        return $this->dbh->prepare($this->sql)->execute($this->bindings);
+    public function exec($sql, array $bindings = array()) {
+        if ( ! empty($bindings)) {
+            try {
+                return $this->dbh->prepare($sql)->execute($bindings);
+            } catch (Exception $e) {
+                $this->dumpError($e);
+            }
+        }
+
+        try {
+            return $this->dbh->exec($sql);
+        } catch (Exception $e) {
+            $this->dumpError($e);
+        }
     }
 
     public function isMySqlKeyword($word)
@@ -87,6 +112,11 @@ class SimplePdo extends BasePdo {
         return in_array($word, $keywords);
     }
 
+    public function ticks($string)
+    {
+        return '`' . $string . '`';
+    }
+
     public function toTickCommaSeperated(array $columns)
     {
         return '`' . implode('`,`', $columns) . '`';
@@ -95,6 +125,19 @@ class SimplePdo extends BasePdo {
     public function toCommaSeperated(array $columns)
     {
         return implode(',', $columns);
+    }
+
+    public function tableExists($sql)
+    {
+        try {
+            return $this->select($sql)->fetch()->rows;
+        } catch (PDOException $e) {
+            if ($e->getCode() === '42S02') { // 42S02: table not found
+                return false;
+            }
+            
+            $this->dumpError($e);
+        }
     }
 
 }
