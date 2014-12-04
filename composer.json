@@ -19,9 +19,10 @@
         "files": [
             "src/Helpers/helpers.php"
         ],
-        "classmap" : [
-            "src",
-            "src/Core"
-        ]
+        "autoload": {
+            "psr-4": {
+                "SimplePdo\\" : "src"
+            }
+        }
     }
 }

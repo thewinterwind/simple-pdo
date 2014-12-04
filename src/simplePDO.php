@@ -7,7 +7,7 @@ use SimplePdo\Core\BasePdo;
 
 class SimplePdo extends BasePdo {
 
-protected $dbh;
+    protected $dbh;
 
     public function select($query, $assoc = false)
     {
@@ -78,32 +78,23 @@ protected $dbh;
         return $this->dbh->prepare($this->sql)->execute($this->bindings);
     }
 
-    protected function bindValues($statement, array $params)
+    public function isMySqlKeyword($word)
     {
-        foreach ($params as $key => $value)
-        {
-            $statement->bindValue(':' . $key, $value);
-        }
+        $keywords = [
+            'long', 'select'
+        ];
 
-        return $statement;
+        return in_array($word, $keywords);
     }
 
-    protected function setBindings($params)
+    public function toTickCommaSeperated(array $columns)
     {
-        foreach ($params as $key => $value) {
-            $this->bindings[':' . $key] = trim($value);
-        }
+        return '`' . implode('`,`', $columns) . '`';
     }
 
-    protected function getUpdateSql($table, array $params)
+    public function toCommaSeperated(array $columns)
     {
-        $sql = 'UPDATE `' . $table . '` SET ';
-
-        foreach ($params as $key => $value) {
-            $sql .= '`' . $key . '` = :' . $key . ', ';
-        }
-
-        return rtrim($sql, ', ');
+        return implode(',', $columns);
     }
 
 }

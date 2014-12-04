@@ -38,4 +38,31 @@ protected $bindings = [];
         unset($config);
     }
     
+    protected function bindValues($statement, array $params)
+    {
+        foreach ($params as $key => $value)
+        {
+            $statement->bindValue(':' . $key, $value);
+        }
+
+        return $statement;
+    }
+
+    protected function setBindings($params)
+    {
+        foreach ($params as $key => $value) {
+            $this->bindings[':' . $key] = trim($value);
+        }
+    }
+
+    protected function getUpdateSql($table, array $params)
+    {
+        $sql = 'UPDATE `' . $table . '` SET ';
+
+        foreach ($params as $key => $value) {
+            $sql .= '`' . $key . '` = :' . $key . ', ';
+        }
+
+        return rtrim($sql, ', ');
+    }
 }
