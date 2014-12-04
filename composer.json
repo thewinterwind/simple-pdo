@@ -19,10 +19,8 @@
         "files": [
             "src/Helpers/helpers.php"
         ],
-        "autoload": {
-            "psr-4": {
-                "SimplePdo\\" : "src"
-            }
+        "psr-4": {
+            "SimplePdo\\" : "src"
         }
     }
 }
