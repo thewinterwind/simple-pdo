@@ -112,21 +112,6 @@ class SimplePdo extends BasePdo {
         return in_array($word, $keywords);
     }
 
-    public function ticks($string)
-    {
-        return '`' . $string . '`';
-    }
-
-    public function toTickCommaSeperated(array $columns)
-    {
-        return '`' . implode('`,`', $columns) . '`';
-    }
-
-    public function toCommaSeperated(array $columns)
-    {
-        return implode(',', $columns);
-    }
-
     public function tableExists($sql)
     {
         try {
@@ -138,6 +123,29 @@ class SimplePdo extends BasePdo {
             
             $this->dumpError($e);
         }
+    }
+
+    public function idExists($id, $table)
+    {
+        $result = $this->select('exists(SELECT 1 FROM ' . $table . ' where id=' . $id . ') as `exists`')->fetch();
+
+        return (bool) $result->exists;
+    }
+
+    protected function getNextId($id, $table)
+    {
+        $sql = 'id from ' . $table . ' where id = (select min(id) from ' . $table . ' where id > ' . $id . ')';
+
+        $result = $this->select($sql)->fetch();
+
+        return isset($result) ? $result->id : null;
+    }
+
+    protected function addNewColumn($table, $column)
+    {
+        $sql = 'ALTER TABLE ' . $table . ' ADD ' . $column . ' int(11)';
+
+        $this->dbh->statement($sql);
     }
 
 }

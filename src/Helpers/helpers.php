@@ -14,3 +14,18 @@ if ( ! function_exists('dd'))
     }
 
 }
+
+function ticks()
+{
+    return '`' . $string . '`';
+}
+
+function tickCommaSeperate(array $columns)
+{
+    return '`' . implode('`,`', $columns) . '`';
+}
+
+function commaSeperate(array $columns)
+{
+    return implode(',', $columns);
+}
