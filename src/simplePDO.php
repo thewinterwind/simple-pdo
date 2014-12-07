@@ -136,10 +136,10 @@ class SimplePdo extends BasePdo {
         return (int) $this->select($sql)->fetch()->count;
     }
 
-    public function tableExists($sql)
+    public function tableExists($table)
     {
         try {
-            return $this->select($sql)->fetch()->rows;
+            return is_int($this->select('count(*) as count FROM ' . $table)->fetch()->count);
         } catch (PDOException $e) {
             if ($e->getCode() === '42S02') { // 42S02: table not found
                 return false;
