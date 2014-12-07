@@ -149,6 +149,13 @@ class SimplePdo extends BasePdo {
         }
     }
 
+    public function copyTable($sourceTable, $newTable)
+    {
+        $sql = 'CREATE TABLE ' . ticks($newTable) . ' LIKE ' . ticks($sourceTable);
+        
+        $this->statement($sql);
+    }
+
     public function idExists($id, $table)
     {
         $result = $this->select('exists(SELECT 1 FROM ' . $table . ' where id=' . $id . ') as `exists`')->fetch();
@@ -162,14 +169,14 @@ class SimplePdo extends BasePdo {
 
         $result = $this->select($sql)->fetch();
 
-        return isset($result) ? $result->id : null;
+        return isset($result->id) ? $result->id : null;
     }
 
-    public function addNewColumn($table, $column)
+    public function addIntegerColumn($table, $column)
     {
-        $sql = 'ALTER TABLE ' . $table . ' ADD ' . $column . ' int(11)';
+        $sql = 'ALTER TABLE ' . ticks($table) . ' ADD ' . ticks($column) . ' int(11)';
 
-        $this->dbh->statement($sql);
+        $this->statement($sql);
     }
 
 }
