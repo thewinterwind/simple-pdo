@@ -15,9 +15,9 @@ if ( ! function_exists('dd'))
 
 }
 
-function ticks()
+function ticks($field)
 {
-    return '`' . $string . '`';
+    return '`' . $field . '`';
 }
 
 function tickCommaSeperate(array $columns)

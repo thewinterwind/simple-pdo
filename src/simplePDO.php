@@ -114,27 +114,26 @@ class SimplePdo extends BasePdo {
 
     public function getUniqueRows($dupeTable, $columns)
     {
-        $sql = 'DISTINCT ' . tickCommaSeperated($columns);
+        $sql = 'DISTINCT ' . tickCommaSeperate($columns);
         
         return $this->select('count(' . $sql . ') as uniques FROM ' . $dupeTable)->fetch()->uniques;
     }
 
     public function getDuplicateRows($table, array $columns)
     {
-        $columns = tickCommaSeperated($columns);
-
         $firstColumn = $columns[0];
+        $columns = tickCommaSeperate($columns);
 
-        $sql = 'count(*) dupes
+        $sql = ('sum(cnt - 1) as count
         FROM
         (
-            SELECT ' . $columns . ', count(' . $firstColumn . ')
-            from ' . $table . '
-            group by ' . $columns . '
-            having count(*) > 1
-        ) x';
+            SELECT ' . $firstColumn . ', count(*) as cnt
+            FROM ' . $table . '
+            GROUP BY ' . $columns . '
+            HAVING count(*) > 1
+        ) x');
 
-        return $this->select($sql)->fetch();
+        return (int) $this->select($sql)->fetch()->count;
     }
 
     public function tableExists($sql)
