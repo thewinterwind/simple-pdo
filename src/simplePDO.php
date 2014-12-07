@@ -149,6 +149,25 @@ class SimplePdo extends BasePdo {
         }
     }
 
+    public function createIndex($table, $column)
+    {
+        $column = ticks($column);
+
+        $sql = 'ALTER TABLE ' . ticks($table) . ' ADD INDEX ' . $column . ' (' . $column . ')';
+
+        $this->statement($sql);
+    }
+
+    public function createCompositeIndex($table, array $columns)
+    {
+        $indexName = implode('_', $columns);
+        $columns = tickCommaSeperate($columns);
+
+        $sql = 'CREATE INDEX ' . $indexName . ' ON ' . $table . '(' . $columns . ')';
+
+        $this->statement($sql);
+    }
+
     public function copyTable($sourceTable, $newTable)
     {
         $sql = 'CREATE TABLE ' . ticks($newTable) . ' LIKE ' . ticks($sourceTable);
