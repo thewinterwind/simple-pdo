@@ -14,14 +14,21 @@ SimplePDO
 
 ###Configuration
 - `cp config.php.sample config.php`
+- or require a database file from your project
 - Update to your database credentials
-- Get your machine hostname by typing `hostname` into your command line
 
 ###Usage
 ```php
-$db = new \SimplePdo\SimplePdo;
+$pdo = new SimplePdo(require 'database.php');
 
-$db->raw('SELECT * FROM users'); // returns the result object
+$pdo->statement('CREATE TABLE users'); // returns the result object
 
-$db->raw('SELECT * FROM users', true); // returns the result array
+$pdo->select('* FROM users', true)->fetch(); // returns the result object
+
+$pdo->getTotalRows($table);
+
+$pdo->createCompositeIndex($table, $columns)
+
 ```
+
+Check out simplePdo.php to find all the methods!
