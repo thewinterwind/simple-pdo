@@ -151,11 +151,18 @@ class SimplePdo extends BasePdo {
 
     public function createIndex($table, $column)
     {
-        $column = ticks($column);
+        //$this->indexExists($table, $column . '_drt');
 
-        $sql = 'ALTER TABLE ' . ticks($table) . ' ADD INDEX ' . $column . ' (' . $column . ')';
+        $sql = 'ALTER TABLE ' . ticks($table) . ' ADD INDEX ' . $column . '_drt(' . $column . ')';
 
         $this->statement($sql);
+    }
+
+    public function indexExists($table, $keyname)
+    {
+        // $result = $this->dbh->exec('SHOW INDEX FROM ' . $table . ' WHERE Key_name = ' . ticks($keyname));
+
+        // dd($resut);
     }
 
     public function createCompositeIndex($table, array $columns)
