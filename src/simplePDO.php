@@ -153,7 +153,7 @@ class SimplePdo extends BasePdo {
     {
         //$this->indexExists($table, $column . '_drt');
 
-        $sql = 'ALTER TABLE ' . ticks($table) . ' ADD INDEX ' . $column . '_drt(' . $column . ')';
+        $sql = 'CREATE INDEX ' . $column . '_drt ON ' . ticks($table) . ' (' ticks($column) . ')';
 
         $this->statement($sql);
     }
