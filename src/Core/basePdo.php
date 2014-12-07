@@ -67,6 +67,13 @@ protected $bindings = [];
         return rtrim($sql, ', ');
     }
 
+    protected function placeholders(array $params)
+    {
+        $keys = implode(',', array_keys($params));
+
+        return ':' . implode(',:', array_keys($params));
+    }
+
     protected function dumpError($error) {
         $backtrace = debug_backtrace();
 

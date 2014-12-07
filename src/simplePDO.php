@@ -60,13 +60,6 @@ class SimplePdo extends BasePdo {
         }
     }
 
-    protected function placeholders(array $params)
-    {
-        $keys = implode(',', array_keys($params));
-
-        return ':' . implode(',:', array_keys($params));
-    }
-
     public function where(array $params, $operator = '=')
     {
         $this->sql .= ' WHERE ';
@@ -112,6 +105,38 @@ class SimplePdo extends BasePdo {
         return in_array($word, $keywords);
     }
 
+    public function getTotalRows($table)
+    {
+        $sql = 'count(*) as count FROM ' . $table;
+
+        return $this->select($sql)->fetch()->count;
+    }
+
+    public function getUniqueRows($dupeTable, $columns)
+    {
+        $sql = 'DISTINCT ' . $this->pdo->toTickCommaSeperated($columns);
+        
+        return $this->pdo->select('count(' . $sql . ') as uniques FROM ' . $dupeTable)->fetch()->uniques;
+    }
+
+    public function getDuplicateRows($table, array $columns)
+    {
+        $columns = $this->toTickCommaSeperated($columns);
+
+        $firstColumn = $columns[0];
+
+        $sql = 'count(*) dupes
+        FROM
+        (
+            SELECT ' . $columns . ', count(' . $firstColumn . ')
+            from ' . $table . '
+            group by ' . $columns . '
+            having count(*) > 1
+        ) x';
+
+        return $this->select($sql)->fetch();
+    }
+
     public function tableExists($sql)
     {
         try {
@@ -132,7 +157,7 @@ class SimplePdo extends BasePdo {
         return (bool) $result->exists;
     }
 
-    protected function getNextId($id, $table)
+    public function getNextId($id, $table)
     {
         $sql = 'id from ' . $table . ' where id = (select min(id) from ' . $table . ' where id > ' . $id . ')';
 
@@ -141,7 +166,7 @@ class SimplePdo extends BasePdo {
         return isset($result) ? $result->id : null;
     }
 
-    protected function addNewColumn($table, $column)
+    public function addNewColumn($table, $column)
     {
         $sql = 'ALTER TABLE ' . $table . ' ADD ' . $column . ' int(11)';
 
