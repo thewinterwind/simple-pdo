@@ -151,18 +151,24 @@ class SimplePdo extends BasePdo {
 
     public function createIndex($table, $column)
     {
-        //$this->indexExists($table, $column . '_drt');
-
-        $sql = 'CREATE INDEX ' . $column . '_drt ON ' . ticks($table) . ' (' . ticks($column) . ')';
-
-        $this->statement($sql);
+        if ($this->indexExists($table, $column)) {
+            print 'Index ' . $column . '_drt already exists on ' . $table . '. continuing...' . PHP_EOL;
+        } else {
+            $sql = 'CREATE INDEX ' . $column . '_drt ON ' . ticks($table) . ' (' . ticks($column) . ')';
+            $this->statement($sql);
+            print 'Created index ' . $column . '_drt on ' . $table . PHP_EOL;
+        }
     }
 
-    public function indexExists($table, $keyname)
+    public function indexExists($table, $column)
     {
-        // $result = $this->dbh->exec('SHOW INDEX FROM ' . $table . ' WHERE Key_name = ' . ticks($keyname));
+        $key = $column . '_drt';
 
-        // dd($resut);
+        $sql = 'count(1) as count FROM information_schema.statistics ';
+        $sql .= "WHERE TABLE_NAME = '$table'";
+        $sql .= " AND INDEX_NAME = '$key'";
+
+        return (bool) $this->select($sql)->fetch()->count;
     }
 
     public function createCompositeIndex($table, array $columns)
