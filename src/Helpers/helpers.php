@@ -29,3 +29,8 @@ function commaSeperate(array $columns)
 {
     return implode(',', $columns);
 }
+
+function keysToLower($mixed)
+{
+    return is_null($mixed) ? $mixed : array_change_key_case($mixed);
+}
