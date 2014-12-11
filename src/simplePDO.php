@@ -149,6 +149,15 @@ class SimplePdo extends BasePdo {
         }
     }
 
+    public function getColumns($table)
+    {
+        $query = $this->dbh->prepare('DESCRIBE ' . $table);
+        $query->execute();
+        
+        return $query->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    // creates index if it doesn't exist, or else does nothing
     public function createIndex($table, $column)
     {
         if ($this->indexExists($table, $column)) {
@@ -160,13 +169,11 @@ class SimplePdo extends BasePdo {
         }
     }
 
-    public function indexExists($table, $column)
+    public function indexExists($table, $indexName)
     {
-        $key = $column . '_drt';
-
         $sql = 'count(1) as count FROM information_schema.statistics ';
         $sql .= "WHERE TABLE_NAME = '$table'";
-        $sql .= " AND INDEX_NAME = '$key'";
+        $sql .= " AND INDEX_NAME = '$indexName'";
 
         return (bool) $this->select($sql)->fetch()->count;
     }
@@ -186,6 +193,13 @@ class SimplePdo extends BasePdo {
         $sql = 'CREATE TABLE ' . ticks($newTable) . ' LIKE ' . ticks($sourceTable);
         
         $this->statement($sql);
+    }
+
+    public function columnExists($column, $table)
+    {
+        $columns = array_map('strtolower', $this->getColumns($table));
+
+        return in_array(strtolower($column), $columns);
     }
 
     public function idExists($id, $table)
