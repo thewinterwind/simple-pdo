@@ -157,16 +157,10 @@ class SimplePdo extends BasePdo {
         return $query->fetchAll(PDO::FETCH_COLUMN);
     }
 
-    // creates index if it doesn't exist, or else does nothing
-    public function createIndex($table, $column)
+    public function createIndex($table, $column, $indexName)
     {
-        if ($this->indexExists($table, $column)) {
-            print 'Index ' . $column . '_drt already exists on ' . $table . '. continuing...' . PHP_EOL;
-        } else {
-            $sql = 'CREATE INDEX ' . $column . '_drt ON ' . ticks($table) . ' (' . ticks($column) . ')';
-            $this->statement($sql);
-            print 'Created index ' . $column . '_drt on ' . $table . PHP_EOL;
-        }
+        $sql = 'CREATE INDEX ' . $indexName . ' ON ' . ticks($table) . ' (' . ticks($column) . ')';
+        $this->statement($sql);
     }
 
     public function indexExists($table, $indexName)
@@ -178,9 +172,9 @@ class SimplePdo extends BasePdo {
         return (bool) $this->select($sql)->fetch()->count;
     }
 
-    public function createCompositeIndex($table, array $columns)
+    public function createCompositeIndex($table, array $columns, $postfix = '')
     {
-        $indexName = implode('_', $columns);
+        $indexName = implode('_', $columns) . $postfix;
         $columns = tickCommaSeperate($columns);
 
         $sql = 'CREATE INDEX ' . $indexName . ' ON ' . $table . '(' . $columns . ')';
@@ -209,9 +203,11 @@ class SimplePdo extends BasePdo {
         return (bool) $result->exists;
     }
 
-    public function getNextId($id, $table)
+    public function getNextId($id, $table, $and = '')
     {
-        $sql = 'id from ' . $table . ' where id = (select min(id) from ' . $table . ' where id > ' . $id . ')';
+        $subQuery = '(SELECT MIN(id) FROM ' . $table . ' WHERE id > ' . $id . ' ' . $and . ')';
+
+        $sql = 'id FROM ' . $table . ' WHERE id = ' . $subQuery;
 
         $result = $this->select($sql)->fetch();
 
