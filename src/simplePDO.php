@@ -206,15 +206,13 @@ class SimplePdo extends BasePdo {
         return (bool) $result->exists;
     }
 
-    public function getNextId($id, $table, $and = '')
+    public function getNextId($id, $table)
     {
-        $subQuery = '(SELECT MIN(id) FROM ' . $table . ' WHERE id > ' . $id . ' ' . $and . ')';
-
-        $sql = 'id FROM ' . $table . ' WHERE id = ' . $subQuery;
+        $sql = 'id FROM ' . $table . ' WHERE id = (SELECT MIN(id) FROM ' . $table . ' WHERE id > ' . $id . ')';
 
         $result = $this->select($sql)->fetch();
 
-        return isset($result->id) ? $result->id : null;
+        return isset($result->id) ? $result->id : false;
     }
 
     public function addIntegerColumn($table, $column)
