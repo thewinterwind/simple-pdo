@@ -34,3 +34,8 @@ function keysToLower($mixed)
 {
     return is_null($mixed) ? $mixed : array_change_key_case($mixed);
 }
+
+function pretty($number)
+{
+    return number_format($number);
+}
