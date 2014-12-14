@@ -107,7 +107,7 @@ class SimplePdo extends BasePdo {
 
     public function getTotalRows($table)
     {
-        $sql = 'count(*) as count FROM ' . $table;
+        $sql = 'count(id) as count FROM ' . $table;
 
         return $this->select($sql)->fetch()->count;
     }
@@ -119,21 +119,17 @@ class SimplePdo extends BasePdo {
         return $this->select('count(' . $sql . ') as uniques FROM ' . $dupeTable)->fetch()->uniques;
     }
 
-    public function getDuplicateRows($table, array $columns)
+    public function getDuplicateRowCount($table, array $columns)
     {
-        $firstColumn = $columns[0];
-        $columns = tickCommaSeperate($columns);
+        $sql = 'COALESCE(SUM(rows) - count(1), 0) as dupes FROM
+            (
+            SELECT COUNT(1) as rows
+            FROM ' . ticks($table) . '  
+            GROUP BY ' . tickCommaSeperate($columns) . ' 
+            HAVING rows > 1
+            ) x';
 
-        $sql = ('sum(cnt - 1) as count
-        FROM
-        (
-            SELECT ' . $firstColumn . ', count(*) as cnt
-            FROM ' . $table . '
-            GROUP BY ' . $columns . '
-            HAVING count(*) > 1
-        ) x');
-
-        return (int) $this->select($sql)->fetch()->count;
+        return (int) $this->select($sql)->fetch()->dupes;
     }
 
     public function tableExists($table)
@@ -182,10 +178,17 @@ class SimplePdo extends BasePdo {
         $this->statement($sql);
     }
 
-    public function copyTable($sourceTable, $newTable)
+    public function copyTable($sourceTable, $targetTable)
     {
-        $sql = 'CREATE TABLE ' . ticks($newTable) . ' LIKE ' . ticks($sourceTable);
+        $sql = 'CREATE TABLE ' . ticks($targetTable) . ' LIKE ' . ticks($sourceTable);
         
+        $this->statement($sql);
+    }
+
+    public function duplicateContent($sourceTable, $targetTable)
+    {
+        $sql = 'INSERT ' . $targetTable . ' SELECT * FROM ' . $sourceTable;
+
         $this->statement($sql);
     }
 
