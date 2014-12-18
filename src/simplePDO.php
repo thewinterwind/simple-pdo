@@ -107,7 +107,7 @@ class SimplePdo extends BasePdo {
 
     public function getTotalRows($table)
     {
-        $sql = 'count(id) as count FROM ' . $table;
+        $sql = 'count(1) as count FROM ' . $table;
 
         return $this->select($sql)->fetch()->count;
     }
