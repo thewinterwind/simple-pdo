@@ -13,13 +13,28 @@ SimplePDO
 
 
 ###Configuration
-- `cp config.php.sample config.php`
-- or require a database file from your project
-- Update to your database credentials
+- pass in a configuration array
+
+```php
+
+// Laravel style
+$dbCreds = [
+    'host'      => 'localhost',
+    'driver'    => 'mysql',
+    'database'  => 'db_name',
+    'username'  => 'root',
+    'password'  => 'secret',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+];
+
+new SimplePdo($dbCreds);
+```
 
 ###Usage
 ```php
-$pdo = new SimplePdo(require 'database.php');
+$pdo = new SimplePdo($configArray);
 
 $pdo->statement('CREATE TABLE users'); // returns the result object
 
